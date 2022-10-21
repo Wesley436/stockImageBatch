@@ -1,32 +1,40 @@
 import { Button, Grid } from '@mui/material';
-import { TextField, Typography } from '@material-ui/core';
-import Link from '@mui/material/Link';
 import '../styles/App.css';
 import { useContext } from 'react';
 import { StockImageContext } from '../context/StockImageBatchContextProvider';
+import JobInfo from './JobInfo';
+
+const buttonStyle = {
+    margin: '1rem',
+}
+
+const promptTextStyle = {
+    marginBottom: '1rem',
+    textAlign: 'left',
+    whiteSpace: 'nowrap',
+    overflow: 'scroll',
+    overflowX: 'auto',
+    overflowY: 'hidden',
+}
 
 export default function StockImageBatch() {
     const {
-        setInputFile,
-        inputPrompt, setInputPrompt,
+        inputFile, setInputFile,
         inputPrompts, setInputPrompts,
         sendBatchJob,
-        jobFile,
-        requestedAt,
-        startedAt,
-        finishedAt,
-        resultUrl,
-        remarks,
-        resultImageLinks,
+        jobInfos,
+        listJobs,
+        listJobInterval, setListJobInterval,
     } = useContext(StockImageContext);
 
     const readFile = e => {
         const file = e.target.files[0];
         setInputFile(file);
+
         const reader = new FileReader();
         reader.readAsText(file);
         reader.onload = () => {
-            const inputFileLines = reader.result.replace(/\t/g, '').replace(/\r/g, '').split('\n').filter(function(i){return i})
+            const inputFileLines = reader.result.replace(/\t/g, '').replace(/\r/g, '').split('\n').filter(function(i){return i});
             setInputPrompts(inputFileLines);
         }
     }
@@ -34,70 +42,38 @@ export default function StockImageBatch() {
     return(
         <Grid container>
             <Grid item lg={6} sx={{padding:'1rem'}}>
-                {/* <TextField varient='outlined' value={inputPrompt} onChange={(e)=>{setInputPrompt(e.target.value)}}/>
-                <Button disabled={!inputPrompt} variant='contained' onClick={()=>{setInputPrompts([...inputPrompts, inputPrompt]);setInputPrompt('');}}>Add</Button> */}
-                <Button variant='contained' component='label'>
-                    File
+                <Button variant='contained' component='label' sx={buttonStyle}>
+                    Upload file
                     <input type='file' accept='.txt' hidden onChange={readFile}/>
                 </Button>
-                <Button disabled={!inputPrompts.length} variant='contained' onClick={() => {setInputFile();setInputPrompts([]);}}>
+                <Button disabled={!inputFile} variant='contained' onClick={() => {setInputFile();setInputPrompts([]);}} sx={buttonStyle}>
                     Clear file
                 </Button>
-                <Button disabled={!inputPrompts.length} variant='contained' onClick={sendBatchJob}>
+                <Button disabled={!inputFile} variant='contained' onClick={sendBatchJob} sx={buttonStyle}>
                     Send
                 </Button>
                 {inputPrompts.map((prompt, i) => {
                     return(
-                        <Typography key={i} align='left'>
-                            {prompt}
-                        </Typography>
+                        <div key={i} style={{textAlign: 'left'}}>
+                            {i+1 + ':   '}
+                            <p style={promptTextStyle}>
+                                {prompt}
+                            </p>
+                        </div>
                     )
                 })}
             </Grid>
-            <Grid item lg={6}>
+            <Grid container item lg={6}>
                 <Grid item lg={12}>
-                    <Typography align='left'>
-                        job file:
-                        <Link href={jobFile}>
-                            {jobFile}
-                        </Link>
-                    </Typography>
+                    <Button variant='contained' onClick={()=>{if(!listJobInterval){setListJobInterval(setInterval(function () {listJobs()}, 10000))}}} sx={buttonStyle}>
+                        List jobs
+                    </Button>
                 </Grid>
-                <Grid item lg={12}>
-                    <Typography align='left'>
-                        {'request at:' + requestedAt}
-                    </Typography>
-                </Grid>
-                <Grid item lg={12}>
-                    <Typography align='left'>
-                        {'started at:' + startedAt}
-                    </Typography>
-                </Grid>
-                <Grid item lg={12}>
-                    <Typography align='left'>
-                        {'finished at:' + finishedAt}
-                    </Typography>
-                </Grid>
-                <Grid item lg={12}>
-                    <Typography align='left'>
-                        {'result url:' + resultUrl}
-                    </Typography>
-                </Grid>
-                <Grid item lg={12}>
-                    <Typography align='left'>
-                        {'remarks:' + remarks}
-                    </Typography>
-                </Grid>
-                {/* {resultImageLinks.map((resultImageLink, i) => {
+                {jobInfos.slice().reverse().map((jobInfo, i) => {
                     return(
-                        <Grid key={i} item lg={6}>
-                            <img alt={resultImageLink?'Output':null} src={resultImageLink} style={{alignSelf: 'center', maxWidth: '512px', maxHeight: '512px', margin: '1rem'}}/>
-                            <Typography align='center'>
-                                {inputPrompts[i]}
-                            </Typography>
-                        </Grid>
+                        <JobInfo key={i} jobInfo={jobInfo}/>
                     )
-                })} */}
+                })}
             </Grid>
         </Grid>
     )
