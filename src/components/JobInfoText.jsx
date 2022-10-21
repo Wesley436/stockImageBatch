@@ -7,10 +7,10 @@ const textStyle = {
     textAlign: 'left',
 }
 
-export default function JobInfoText({text, href}) {
+export default function JobInfoText({text, href, hidden}) {
     return (
-        <Grid item lg={12}>
-            <Typography sx={textStyle}>
+        <Grid item lg={12} hidden={hidden}>
+            <Typography component={'span'} sx={textStyle}>
                 {href
                     ?   <div style={textStyle}>
                             {text}
