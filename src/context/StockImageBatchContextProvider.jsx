@@ -4,8 +4,9 @@ import axios from 'axios';
 export const StockImageContext = createContext();
 
 export default function StockImageContextProvider(props) {
-    const [inputFile, setInputFile] = useState();
     const [randomNumber, setRandomNumber] = useState();
+
+    const [inputFile, setInputFile] = useState();
     const [inputPrompts, setInputPrompts] = useState([]);
 
     const [jobInfos, setJobInfos] = useState([]);
@@ -40,6 +41,7 @@ export default function StockImageContextProvider(props) {
             if (json.success){
                 if(response.job_status === 'finished'){
                     clearInterval(updatingJobInfo.interval);
+                    updatingJobInfo.interval = '';
                     updatingJobInfo.jobFile = response.job_file;
                     updatingJobInfo.jobStatus = response.job_status;
                     updatingJobInfo.finishedAt = response.finished_at;
@@ -53,6 +55,7 @@ export default function StockImageContextProvider(props) {
                 console.log(response.message);
                 updatingJobInfo.jobStatus = 'error';
                 clearInterval(updatingJobInfo.interval);
+                updatingJobInfo.interval = '';
             }
             setRandomNumber(Math.floor(Math.random() * 9999));
             setJobInfos(jobInfosRef.current);
@@ -90,6 +93,7 @@ export default function StockImageContextProvider(props) {
             if(json.success){
                 newJobInfo.jobId = response.job_id;
                 newJobInfo.interval = setInterval(function () {checkJobStatus(response.job_id)}, 5000);
+                setRandomNumber(Math.floor(Math.random() * 9999));
                 setJobInfos([...jobInfos, newJobInfo]);
             }else{
                 console.log(response.message);
@@ -101,6 +105,9 @@ export default function StockImageContextProvider(props) {
     }
 
     function listJobs (){
+        if(listJobInterval){
+            return;
+        }
         let formData = new FormData();
         formData.append('token', 'token');
 
@@ -119,11 +126,6 @@ export default function StockImageContextProvider(props) {
         .then(json => {
             let response = json.response
             if(json.success){
-                jobInfos.forEach((jobInfo) => {
-                    clearInterval(jobInfo.interval);
-                    jobInfo.interval = '';
-                })
-
                 let latestJobInfos = [];
                 response.job_list.forEach((job) => {
                     let latestJobInfo = {};
@@ -135,10 +137,11 @@ export default function StockImageContextProvider(props) {
                         latestJobInfo.jobId = job.job_id;
                         latestJobInfo.requestedAt = job.requested_at;
                         latestJobInfo.jobStatus = job.job_status;
+                        latestJobInfo.interval = setInterval(function () {checkJobStatus(latestJobInfo.jobId)}, 5000);
                     }
-                    latestJobInfo.interval = setInterval(function () {checkJobStatus(latestJobInfo.jobId)}, 5000);
                     latestJobInfos = [...latestJobInfos, latestJobInfo]
                 })
+                setRandomNumber(Math.floor(Math.random() * 9999));
                 setJobInfos(latestJobInfos);
             }else{
                 console.log(response.message);

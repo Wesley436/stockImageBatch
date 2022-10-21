@@ -65,7 +65,7 @@ export default function StockImageBatch() {
             </Grid>
             <Grid container item lg={6}>
                 <Grid item lg={12}>
-                    <Button variant='contained' onClick={()=>{if(!listJobInterval){setListJobInterval(setInterval(function () {listJobs()}, 10000))}}} sx={buttonStyle}>
+                    <Button variant='contained' onClick={()=>{if(!listJobInterval){listJobs();setListJobInterval(setInterval(function () {listJobs()}, 600000))}}} sx={buttonStyle}>
                         List jobs
                     </Button>
                 </Grid>

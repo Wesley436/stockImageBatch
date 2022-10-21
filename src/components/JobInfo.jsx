@@ -1,9 +1,16 @@
 import { Grid } from '@mui/material';
 import JobInfoText from './JobInfoText';
 
+const jobInfoStyle = {
+    padding: '1rem',
+    margin: '1rem',
+    border: '0.1rem solid black',
+    borderRadius: '1rem'
+}
+
 export default function JobInfo({jobInfo}) {
     return (
-        <Grid item lg={6}>
+        <Grid item lg={5} sx={jobInfoStyle}>
             <JobInfoText text={'job id: ' + jobInfo.jobId}/>
             <JobInfoText text={'job status: ' + jobInfo.jobStatus}/>
             <JobInfoText text={'job file: '} href={jobInfo.jobFile}/>
