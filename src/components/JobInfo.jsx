@@ -7,7 +7,8 @@ const jobInfoStyle = {
     padding: '1rem',
     marginBottom: '1rem',
     border: '0.1rem solid black',
-    borderRadius: '1rem'
+    borderRadius: '1rem',
+    height: 'auto'
 }
 
 export default function JobInfo({jobInfo, detailedInfo}) {

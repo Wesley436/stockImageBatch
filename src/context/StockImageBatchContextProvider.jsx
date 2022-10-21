@@ -5,18 +5,15 @@ export const StockImageContext = createContext();
 
 export default function StockImageContextProvider(props) {
     const [token, setToken] = useState([]);
-
     const [inputFile, setInputFile] = useState();
-    const [inputPrompts, setInputPrompts] = useState([]);
-
     const [jobInfos, setJobInfos] = useState([]);
     const jobInfosRef = useRef(jobInfos);
     jobInfosRef.current = jobInfos;
 
     const [selectedJobInfo, setSelectedJobInfo] = useState();
 
-    // const batchRequestURL = 'http://localhost:3001';
-    const batchRequestURL = 'https://bxrlwa1tjl.execute-api.us-east-1.amazonaws.com';
+    const batchRequestURL = 'http://localhost:3001';
+    // const batchRequestURL = 'https://bxrlwa1tjl.execute-api.us-east-1.amazonaws.com';
 
     function checkJobStatus(jobId) {
         let formData = new FormData();
@@ -25,9 +22,9 @@ export default function StockImageContextProvider(props) {
 
         const index = jobInfosRef.current.findIndex(jobInfo => jobInfo.jobId === jobId);
         axios({
-            method: "post",
+            method: 'post',
             url: batchRequestURL+'/fetchJob',
-            headers: { "Content-Type": "multipart/form-data" },
+            headers: { 'Content-Type': 'multipart/form-data' },
             data: formData,
         })
         .then(response => {
@@ -67,16 +64,14 @@ export default function StockImageContextProvider(props) {
         let formData = new FormData();
         formData.append('token', token);
         formData.append('job_file', inputFile);
-
         setInputFile();
-        setInputPrompts([]);
 
         let newJobInfo = {};
         newJobInfo.jobStatus = 'starting';
         axios({
-            method: "post",
+            method: 'post',
             url: batchRequestURL+'/requestJob',
-            headers: { "Content-Type": "multipart/form-data" },
+            headers: { 'Content-Type': 'multipart/form-data' },
             data: formData,
         })
         .then(response => {
@@ -101,9 +96,9 @@ export default function StockImageContextProvider(props) {
         formData.append('token', token);
 
         axios({
-            method: "post",
+            method: 'post',
             url: batchRequestURL+'/listJobs',
-            headers: { "Content-Type": "multipart/form-data" },
+            headers: { 'Content-Type': 'multipart/form-data' },
             data: formData,
         })
         .then(response => {
@@ -140,7 +135,6 @@ export default function StockImageContextProvider(props) {
             value={{
                 token, setToken,
                 inputFile, setInputFile,
-                inputPrompts, setInputPrompts,
                 sendBatchJob,
                 jobInfos, setJobInfos,
                 selectedJobInfo, setSelectedJobInfo,
