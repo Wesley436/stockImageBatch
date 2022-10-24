@@ -1,12 +1,12 @@
-import { Grid } from '@mui/material';
-import '../styles/App.css';
 import { useContext } from 'react';
 import { StockImageContext } from '../context/StockImageBatchContextProvider';
+import { Grid } from '@mui/material';
 import CardContainer from './CardContainer';
 import TokenField from './TokenField';
 import FileUpload from './FileUpload';
 import JobInfosList from './JobInfosList';
 import SelectedJobInfo from './SelectedJobInfo';
+import '../styles/App.css';
 
 export default function StockImageBatch() {
     const {

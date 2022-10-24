@@ -3,6 +3,7 @@ import { FileUploader } from 'react-drag-drop-files';
 
 const buttonStyle = {
     margin: '2rem',
+    fontSize: '1.5rem',
 }
 
 export default function FileUpload({inputFile, setInputFile, onSend}) {

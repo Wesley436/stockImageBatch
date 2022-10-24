@@ -3,14 +3,15 @@ import JobInfoText from './JobInfoText';
 
 const jobInfoStyle = {
     padding: '1rem',
-    marginBottom: '1rem',
+    margin: '2rem 1rem 1rem 1rem',
     border: '1ren solid black',
     borderRadius: '1rem',
     boxShadow: 8,
 }
 
 const fetchButtonStyle = {
-    top: '25%',
+    top: '10%',
+    fontSize: '1.5rem',
 }
 
 export default function JobInfo({jobInfo, detailedInfo, checkJobStatus}) {

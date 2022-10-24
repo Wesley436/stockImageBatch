@@ -10,8 +10,8 @@ export default function StockImageContextProvider(props) {
 
     const [selectedJobInfo, setSelectedJobInfo] = useState();
 
-    const batchRequestURL = 'http://localhost:3001';
-    // const batchRequestURL = 'https://bxrlwa1tjl.execute-api.us-east-1.amazonaws.com';
+    // const batchRequestURL = 'http://localhost:3001';
+    const batchRequestURL = 'https://bxrlwa1tjl.execute-api.us-east-1.amazonaws.com';
 
     function checkJobStatus(jobId) {
         let formData = new FormData();
@@ -19,10 +19,6 @@ export default function StockImageContextProvider(props) {
         formData.append('job_id', jobId);
 
         const index = jobInfos.findIndex(jobInfo => jobInfo.jobId === jobId);
-
-        if(jobInfos[index].jobStatus === 'finished'){
-            return;
-        }
 
         axios({
             method: 'post',
