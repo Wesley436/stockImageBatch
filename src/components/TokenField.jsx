@@ -1,12 +1,11 @@
 import { TextField } from '@mui/material';
-import { Card, CardContent } from '@mui/material';
+import SectionLabel from './SectionLabel';
 
-export default function TokenField({placeholder, token, setToken}) {
+export default function TokenField({token, setToken}) {
     return (
-        <Card sx={{boxShadow: 16, borderRadius: '1rem'}}>
-            <CardContent sx={{textAlign:'left'}}>
-                <TextField placeholder={placeholder} varient='outlined' value={token} onChange={(e)=>{setToken(e.target.value)}}/>
-            </CardContent>
-        </Card>
+        <>
+            <SectionLabel labelText='Token'/>
+            <TextField variant='standard' value={token} onChange={(e)=>{setToken(e.target.value)}}/>
+        </>
     )
 }

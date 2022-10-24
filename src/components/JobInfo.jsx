@@ -4,9 +4,13 @@ import JobInfoText from './JobInfoText';
 const jobInfoStyle = {
     padding: '1rem',
     marginBottom: '1rem',
-    border: '0.1rem solid black',
+    border: '1ren solid black',
     borderRadius: '1rem',
-    height: 'auto'
+    boxShadow: 8,
+}
+
+const fetchButtonStyle = {
+    top: '25%',
 }
 
 export default function JobInfo({jobInfo, detailedInfo, checkJobStatus}) {
@@ -23,7 +27,7 @@ export default function JobInfo({jobInfo, detailedInfo, checkJobStatus}) {
                 <JobInfoText hidden={!jobInfo.remarks||!detailedInfo} text={'remarks: ' + jobInfo.remarks}/>
             </Grid>
             <Grid item lg={2} hidden={detailedInfo}>
-                <Button variant='contained' onClick={()=>{checkJobStatus(jobInfo.jobId)}}>Fetch</Button>
+                <Button variant='contained' onClick={()=>{checkJobStatus(jobInfo.jobId)}} sx={fetchButtonStyle}>Fetch</Button>
             </Grid>
         </Grid>
     )

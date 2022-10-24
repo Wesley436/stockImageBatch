@@ -1,4 +1,4 @@
-import { createContext, useState, useRef } from 'react';
+import { createContext, useState } from 'react';
 import axios from 'axios';
 
 export const StockImageContext = createContext();
@@ -7,8 +7,6 @@ export default function StockImageContextProvider(props) {
     const [token, setToken] = useState([]);
     const [inputFile, setInputFile] = useState();
     const [jobInfos, setJobInfos] = useState([]);
-    const jobInfosRef = useRef(jobInfos);
-    jobInfosRef.current = jobInfos;
 
     const [selectedJobInfo, setSelectedJobInfo] = useState();
 
@@ -20,7 +18,12 @@ export default function StockImageContextProvider(props) {
         formData.append('token', token);
         formData.append('job_id', jobId);
 
-        const index = jobInfosRef.current.findIndex(jobInfo => jobInfo.jobId === jobId);
+        const index = jobInfos.findIndex(jobInfo => jobInfo.jobId === jobId);
+
+        if(jobInfos[index].jobStatus === 'finished'){
+            return;
+        }
+
         axios({
             method: 'post',
             url: batchRequestURL+'/fetchJob',
@@ -32,7 +35,7 @@ export default function StockImageContextProvider(props) {
         })
         .then(json => {
             let response = json.response;
-            let updatingJobInfo = [...jobInfosRef.current][index];
+            let updatingJobInfo = [...jobInfos][index];
             if (json.success){
                 updatingJobInfo.jobFile = response.job_file;
                 updatingJobInfo.jobStatus = response.job_status;
@@ -45,7 +48,7 @@ export default function StockImageContextProvider(props) {
                 console.log(response.message);
                 updatingJobInfo.jobStatus = 'error';
             }
-            const updatingJobInfos = jobInfosRef.current.map((jobInfo, i)=>{
+            const updatingJobInfos = jobInfos.map((jobInfo, i)=>{
                 if(i === index){
                     return updatingJobInfo;
                 }else{
