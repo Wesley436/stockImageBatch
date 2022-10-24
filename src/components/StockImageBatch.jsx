@@ -21,22 +21,22 @@ export default function StockImageBatch() {
 
     return(
         <Grid container>
-            <Grid item lg={12} sx={{padding:'1rem', borderRadius:'50px'}}>
+            <Grid item xs={12} sx={{padding:'1rem', borderRadius:'50px'}}>
                 <CardContainer left>
                     <TokenField token={token} setToken={setToken}/>
                 </CardContainer>
             </Grid>
-            <Grid container item lg={12} sx={{padding:'1rem'}}>
+            <Grid container item xs={12} sx={{padding:'1rem'}}>
                 <CardContainer left>
                     <FileUpload inputFile={inputFile} setInputFile={setInputFile} onSend={sendBatchJob}/>
                 </CardContainer>
             </Grid>
-            <Grid container item lg={6} sx={{padding:'1rem'}}>
+            <Grid container item xs={6} sx={{padding:'1rem'}}>
                 <CardContainer left>
                     <JobInfosList listJobs={listJobs} jobInfos={jobInfos} checkJobStatus={checkJobStatus}/>
                 </CardContainer>
             </Grid>
-            <Grid container item lg={6} sx={{padding:'1rem'}}>
+            <Grid container item xs={6} sx={{padding:'1rem'}}>
                 <CardContainer left>
                     <SelectedJobInfo selectedJobInfo={selectedJobInfo} refreshJobDetails={()=>{if(selectedJobInfo){checkJobStatus(selectedJobInfo.jobId)}}}/>
                 </CardContainer>

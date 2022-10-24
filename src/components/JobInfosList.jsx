@@ -1,22 +1,44 @@
+import { useContext } from 'react';
+import { StockImageContext } from '../context/StockImageBatchContextProvider';
 import { Grid } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 import JobInfo from './JobInfo';
 import SectionLabel from './SectionLabel';
 import RefreshButton from './RefreshButton';
 
 export default function JobInfosList({listJobs, jobInfos, checkJobStatus}) {
+    const {
+        isLoading,
+    } = useContext(StockImageContext);
+
     return (
-        <Grid container>
-            <Grid item lg={11}>
+        <Grid container item xs={12}>
+            <Grid item xs={11}>
                 <SectionLabel labelText='Jobs list'/>
             </Grid>
-            <Grid item lg={1}>
+            <Grid item xs={1}>
                 <RefreshButton onRefresh={listJobs}/>
             </Grid>
-            {jobInfos.slice().reverse().map((jobInfo, i) => {
-                return(
-                    <JobInfo key={i} jobInfo={jobInfo} checkJobStatus={checkJobStatus}/>
-                )
-            })}
+            <Grid item xs={12}>
+                {isLoading
+                    ?
+                    <LoadingButton loading={true} sx={{width: '100%', height: '100%', scale: '3'}}/>
+                    :
+                    jobInfos.slice().sort((jobA, jobB)=>{
+                        if(jobA.requestedAt > jobB.requestedAt){
+                            return -1;
+                        }
+                        if(jobB.requestedAt > jobA.requestedAt){
+                            return 1;
+                        }
+                        return 0;
+                    }).map((jobInfo, i) => {
+                        return(
+                            <JobInfo key={i} jobInfo={jobInfo} checkJobStatus={checkJobStatus}/>
+                        )
+                    })
+                }
+            </Grid>
         </Grid>
     )
 }

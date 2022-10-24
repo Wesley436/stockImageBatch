@@ -6,9 +6,12 @@ export const StockImageContext = createContext();
 export default function StockImageContextProvider(props) {
     const [token, setToken] = useState([]);
     const [inputFile, setInputFile] = useState();
+    const [isLoading, setIsLoading] = useState(false);
     const [jobInfos, setJobInfos] = useState([]);
 
     const [selectedJobInfo, setSelectedJobInfo] = useState();
+
+    const [errorMessage, setErrorMessage] = useState();
 
     // const batchRequestURL = 'http://localhost:3001';
     const batchRequestURL = 'https://bxrlwa1tjl.execute-api.us-east-1.amazonaws.com';
@@ -20,6 +23,7 @@ export default function StockImageContextProvider(props) {
 
         const index = jobInfos.findIndex(jobInfo => jobInfo.jobId === jobId);
 
+        setIsLoading(true);
         axios({
             method: 'post',
             url: batchRequestURL+'/fetchJob',
@@ -41,7 +45,7 @@ export default function StockImageContextProvider(props) {
                 updatingJobInfo.jobStatus = response.job_status;
                 updatingJobInfo.startedAt = response.started_at;
             }else {
-                console.log(response.message);
+                setErrorMessage(response.message);
                 updatingJobInfo.jobStatus = 'error';
             }
             const updatingJobInfos = jobInfos.map((jobInfo, i)=>{
@@ -53,9 +57,11 @@ export default function StockImageContextProvider(props) {
             })
             setSelectedJobInfo(updatingJobInfo);
             setJobInfos(updatingJobInfos);
+            setIsLoading(false);
         })
         .catch(err => {
-            console.log(err);
+            setErrorMessage(err);
+            setIsLoading(false);
         })
     }
 
@@ -67,6 +73,7 @@ export default function StockImageContextProvider(props) {
 
         let newJobInfo = {};
         newJobInfo.jobStatus = 'starting';
+        setIsLoading(true);
         axios({
             method: 'post',
             url: batchRequestURL+'/requestJob',
@@ -80,13 +87,15 @@ export default function StockImageContextProvider(props) {
             let response = json.response;
             if(json.success){
                 newJobInfo.jobId = response.job_id;
-                setJobInfos([...jobInfos, newJobInfo]);
+                setJobInfos([...jobInfos, newJobInfo])
             }else{
-                console.log(response.message);
+                setErrorMessage(response.message);
             }
+            setIsLoading(false);
         })
         .catch(err => {
-            console.log(err);
+            setErrorMessage(err);
+            setIsLoading(false);
         })
     }
 
@@ -94,6 +103,7 @@ export default function StockImageContextProvider(props) {
         let formData = new FormData();
         formData.append('token', token);
 
+        setIsLoading(true);
         axios({
             method: 'post',
             url: batchRequestURL+'/listJobs',
@@ -121,11 +131,13 @@ export default function StockImageContextProvider(props) {
                 })
                 setJobInfos(latestJobInfos);
             }else{
-                console.log(response.message);
+                setErrorMessage(response.message);
             }
+            setIsLoading(false);
         })
         .catch(err => {
-            console.log(err);
+            setErrorMessage(err);
+            setIsLoading(false);
         })
     }
 
@@ -135,10 +147,12 @@ export default function StockImageContextProvider(props) {
                 token, setToken,
                 inputFile, setInputFile,
                 sendBatchJob,
+                isLoading, setIsLoading,
                 jobInfos, setJobInfos,
                 selectedJobInfo, setSelectedJobInfo,
                 listJobs,
                 checkJobStatus,
+                errorMessage, setErrorMessage,
             }}
         >
             {props.children}

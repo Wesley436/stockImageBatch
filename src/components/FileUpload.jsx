@@ -9,11 +9,11 @@ const buttonStyle = {
 export default function FileUpload({inputFile, setInputFile, onSend}) {
     return (
         <>
-            <Grid container item lg={12}>
-                <Grid item lg={12} sx={{display: 'flex', justifyContent: 'center'}}>
+            <Grid container item xs={12}>
+                <Grid item xs={12} sx={{display: 'flex', justifyContent: 'center'}}>
                     <FileUploader handleChange={setInputFile} types={['txt']}/>
                 </Grid>
-                <Grid item lg={12}>
+                <Grid item xs={12}>
                     <Button disabled={!inputFile} variant='contained' sx={buttonStyle} onClick={()=>{setInputFile()}}>
                         Clear file
                     </Button>
@@ -22,7 +22,7 @@ export default function FileUpload({inputFile, setInputFile, onSend}) {
                     </Button>
                 </Grid>
             </Grid>
-            <Grid item lg={12} hidden={!inputFile}>
+            <Grid item xs={12} hidden={!inputFile}>
                 {inputFile?inputFile.name:''}
             </Grid>
         </>

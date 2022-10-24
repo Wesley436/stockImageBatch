@@ -9,7 +9,7 @@ const textStyle = {
 
 export default function JobInfoText({text, href, hidden}) {
     return (
-        <Grid item lg={12} hidden={hidden}>
+        <Grid item xs={12} hidden={hidden}>
             <Typography component={'span'} sx={textStyle}>
                 {href
                     ?   <div style={textStyle}>

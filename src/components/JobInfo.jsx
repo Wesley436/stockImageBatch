@@ -11,23 +11,24 @@ const jobInfoStyle = {
 
 const fetchButtonStyle = {
     top: '10%',
-    fontSize: '1.5rem',
+    fontSize: '1rem',
 }
+
 
 export default function JobInfo({jobInfo, detailedInfo, checkJobStatus}) {
     return (
-        <Grid container item lg={12} sx={jobInfoStyle}>
-            <Grid item lg={10}>
+        <Grid container item xs={12} sx={jobInfoStyle}>
+            <Grid item xs={9}>
                 <JobInfoText hidden={!jobInfo.jobId} text={'job id: ' + jobInfo.jobId}/>
                 <JobInfoText hidden={!jobInfo.jobStatus} text={'job status: ' + jobInfo.jobStatus}/>
                 <JobInfoText hidden={!jobInfo.jobFile||!detailedInfo} text={'job file: '} href={jobInfo.jobFile}/>
-                <JobInfoText hidden={!jobInfo.requestedAt} text={'request at: ' + jobInfo.requestedAt}/>
-                <JobInfoText hidden={!jobInfo.startedAt||!detailedInfo} text={'started at: ' + jobInfo.startedAt}/>
-                <JobInfoText hidden={!jobInfo.finishedAt||!detailedInfo} text={'finished at: ' + jobInfo.finishedAt}/>
+                <JobInfoText hidden={!jobInfo.requestedAt} text={'request at: ' + new Date(jobInfo.requestedAt*1000).toUTCString()}/>
+                <JobInfoText hidden={!jobInfo.startedAt||!detailedInfo} text={'started at: ' + new Date(jobInfo.startedAt*1000).toUTCString()}/>
+                <JobInfoText hidden={!jobInfo.finishedAt||!detailedInfo} text={'finished at: ' + new Date(jobInfo.finishedAt*1000).toUTCString()}/>
                 <JobInfoText hidden={!jobInfo.resultUrl||!detailedInfo} text={'result url: '} href={jobInfo.resultUrl}/>
                 <JobInfoText hidden={!jobInfo.remarks||!detailedInfo} text={'remarks: ' + jobInfo.remarks}/>
             </Grid>
-            <Grid item lg={2} hidden={detailedInfo}>
+            <Grid item xs={2} hidden={detailedInfo}>
                 <Button variant='contained' onClick={()=>{checkJobStatus(jobInfo.jobId)}} sx={fetchButtonStyle}>Fetch</Button>
             </Grid>
         </Grid>
