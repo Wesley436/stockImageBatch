@@ -1,7 +1,5 @@
 import { Grid, Button } from '@mui/material';
 import JobInfoText from './JobInfoText';
-import { StockImageContext } from '../context/StockImageBatchContextProvider';
-import { useContext } from 'react';
 
 const jobInfoStyle = {
     padding: '1rem',
@@ -11,10 +9,7 @@ const jobInfoStyle = {
     height: 'auto'
 }
 
-export default function JobInfo({jobInfo, detailedInfo}) {
-    const {
-        checkJobStatus
-    } = useContext(StockImageContext);
+export default function JobInfo({jobInfo, detailedInfo, checkJobStatus}) {
     return (
         <Grid container item lg={12} sx={jobInfoStyle}>
             <Grid item lg={10}>

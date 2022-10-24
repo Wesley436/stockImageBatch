@@ -1,19 +1,18 @@
-import { Grid, TextField, Button } from '@mui/material';
+import { Grid } from '@mui/material';
 import '../styles/App.css';
 import { useContext } from 'react';
 import { StockImageContext } from '../context/StockImageBatchContextProvider';
-import JobInfo from './JobInfo';
-import { FileUploader } from 'react-drag-drop-files';
-
-const buttonStyle = {
-    margin: '1rem',
-}
+import TokenField from './TokenField';
+import FileUpload from './FileUpload';
+import JobInfosList from './JobInfosList';
+import SelectedJobInfo from './SelectedJobInfo';
 
 export default function StockImageBatch() {
     const {
         token, setToken,
         inputFile, setInputFile,
         sendBatchJob,
+        checkJobStatus,
         jobInfos,
         selectedJobInfo,
         listJobs,
@@ -21,41 +20,17 @@ export default function StockImageBatch() {
 
     return(
         <Grid container>
-            <Grid item lg={12} sx={{display: 'flex', justifyContent: 'left', padding:'1rem'}}>
-                <TextField placeholder={'token'} varient='outlined' value={token} onChange={(e)=>{setToken(e.target.value)}}/>
+            <Grid item lg={12} sx={{padding:'1rem', borderRadius:'50px'}}>
+                <TokenField placeholder='token' token={token} setToken={setToken}/>
             </Grid>
             <Grid container item lg={12} sx={{padding:'1rem'}}>
-                <Grid container item lg={12}>
-                    <Grid item lg={12} sx={{display: 'flex', justifyContent: 'center'}}>
-                        <FileUploader handleChange={setInputFile} types={['txt']}/>
-                    </Grid>
-                    <Grid item lg={12}>
-                        <Button disabled={!inputFile} variant='contained' sx={buttonStyle} onClick={()=>{setInputFile()}}>
-                            Clear file
-                        </Button>
-                        <Button disabled={!inputFile} variant='contained' onClick={sendBatchJob} sx={buttonStyle}>
-                            Send
-                        </Button>
-                    </Grid>
-                </Grid>
-                <Grid item lg={12} hidden={!inputFile}>
-                    {inputFile?inputFile.name:''}
-                </Grid>
+                <FileUpload inputFile={inputFile} setInputFile={setInputFile} onSend={sendBatchJob}/>
             </Grid>
             <Grid container item lg={6} sx={{padding:'1rem'}}>
-                <Grid item lg={12}>
-                    <Button variant='contained' onClick={listJobs} sx={buttonStyle}>
-                        List jobs
-                    </Button>
-                </Grid>
-                {jobInfos.slice().reverse().map((jobInfo, i) => {
-                    return(
-                        <JobInfo key={i} jobInfo={jobInfo}/>
-                    )
-                })}
+                <JobInfosList listJobs={listJobs} jobInfos={jobInfos} checkJobStatus={checkJobStatus}/>
             </Grid>
             <Grid container item lg={6} sx={{padding:'1rem'}}>
-                {selectedJobInfo?<JobInfo jobInfo={selectedJobInfo} detailedInfo={true}/>:<></>}
+                <SelectedJobInfo selectedJobInfo={selectedJobInfo}/>
             </Grid>
         </Grid>
     )
