@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useRef } from 'react';
 import { StockImageContext } from '../context/StockImageBatchContextProvider';
 import { Grid } from '@mui/material';
 import { TextField } from '@mui/material';
@@ -13,6 +13,8 @@ export default function JobInfosList({listJobs, jobInfos, checkJobStatus}) {
         isJobsListLoading,
     } = useContext(StockImageContext);
 
+    const pageFieldRef = useRef(null);
+
     function handlePageInput(e) {
         let page = parseInt(e.target.value);
         if(page<0){
@@ -24,15 +26,26 @@ export default function JobInfosList({listJobs, jobInfos, checkJobStatus}) {
         setJobListPage(page);
     }
 
+    const pageFieldProps = {
+        ref: pageFieldRef
+    }
+
+    function handleKey(key){
+        if(key === 'Enter'){
+            listJobs();
+            pageFieldRef.current.blur();
+        }
+    }
+
     return (
         <Grid container item xs={12}>
-            <Grid item xs={9}>
+            <Grid item xs={8}>
                 <SectionLabel labelText='Jobs list'/>
             </Grid>
             <Grid item xs={2}>
-                <TextField variant="outlined" label="Page" type="tel" value={jobListPage} onChange={(e)=>{handlePageInput(e)}}/>
+                <TextField variant="outlined" label="Page" type="tel" value={jobListPage} onChange={(e)=>{handlePageInput(e)}} inputProps={pageFieldProps} onBlur={()=>listJobs()} onKeyDown={(e)=>{handleKey(e.key)}}/>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs={2}>
                 <RefreshButton onRefresh={listJobs}/>
             </Grid>
             <Grid item xs={12}>
