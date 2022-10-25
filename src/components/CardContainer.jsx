@@ -4,7 +4,7 @@ const cardContainerStyle = {
     width:'100%',
     boxShadow: 8,
     borderRadius: '1rem',
-    padding: '1rem',
+    padding: '2rem',
 }
 
 export default function CardContainer({left, children}) {

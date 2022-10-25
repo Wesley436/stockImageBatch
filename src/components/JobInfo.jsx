@@ -20,6 +20,7 @@ export default function JobInfo({jobInfo, detailedInfo, checkJobStatus}) {
         <Grid container item xs={12} sx={jobInfoStyle}>
             <Grid item xs={9}>
                 <JobInfoText hidden={!jobInfo.jobId} text={'job id: ' + jobInfo.jobId}/>
+                <JobInfoText hidden={!jobInfo.jobName} text={'job name: ' + jobInfo.jobName}/>
                 <JobInfoText hidden={!jobInfo.jobStatus} text={'job status: ' + jobInfo.jobStatus}/>
                 <JobInfoText hidden={!jobInfo.jobFile||!detailedInfo} text={'job file: '} href={jobInfo.jobFile}/>
                 <JobInfoText hidden={!jobInfo.requestedAt} text={'request at: ' + new Date(jobInfo.requestedAt*1000).toUTCString()}/>

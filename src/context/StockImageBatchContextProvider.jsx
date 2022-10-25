@@ -4,9 +4,11 @@ import axios from 'axios';
 export const StockImageContext = createContext();
 
 export default function StockImageContextProvider(props) {
-    const [token, setToken] = useState([]);
+    const [token, setToken] = useState('');
     const [inputFile, setInputFile] = useState();
+    const [inputJobName, setInputJobName] = useState('');
     const [jobListPage, setJobListPage] = useState(0);
+    const [searchQuery, setSearchQuery] = useState('');
     const [isJobsListLoading, setIsJobsListLoading] = useState(false);
     const [jobInfos, setJobInfos] = useState([]);
     const jobInfosRef = useRef(jobInfos);
@@ -54,6 +56,7 @@ export default function StockImageContextProvider(props) {
                 updatingJobInfo.remarks = response.remarks;
                 updatingJobInfo.jobStatus = response.job_status;
                 updatingJobInfo.startedAt = response.started_at;
+                updatingJobInfo.jobName = response.job_name;
                 const updatingJobInfos = jobInfosRef.current.map((jobInfo, i)=>{
                     if(i === index){
                         return updatingJobInfo;
@@ -80,9 +83,15 @@ export default function StockImageContextProvider(props) {
         let formData = new FormData();
         formData.append('token', token);
         formData.append('job_file', inputFile);
-        setInputFile();
 
         let newJobInfo = {};
+        if (inputJobName){
+            newJobInfo.jobName = inputJobName;
+            formData.append('job_name', inputJobName);
+        }
+        setInputJobName('');
+        setInputFile();
+
         newJobInfo.jobStatus = 'starting';
         setIsJobsListLoading(true);
         setErrorMessage('');
@@ -121,6 +130,9 @@ export default function StockImageContextProvider(props) {
         let formData = new FormData();
         formData.append('token', token);
         formData.append('page', jobListPage);
+        if (searchQuery){
+            formData.append('query', searchQuery);
+        }
 
         setIsJobsListLoading(true);
         setErrorMessage('');
@@ -143,6 +155,7 @@ export default function StockImageContextProvider(props) {
                     latestJobInfo.jobId = job.job_id;
                     latestJobInfo.requestedAt = job.requested_at;
                     latestJobInfo.jobStatus = job.job_status;
+                    latestJobInfo.jobName = job.job_name;
                     latestJobInfos = [...latestJobInfos, latestJobInfo]
                 })
                 setJobInfos(latestJobInfos);
@@ -164,8 +177,10 @@ export default function StockImageContextProvider(props) {
             value={{
                 token, setToken,
                 inputFile, setInputFile,
+                inputJobName, setInputJobName,
                 sendBatchJob,
                 jobListPage, setJobListPage,
+                searchQuery, setSearchQuery,
                 isJobsListLoading, setIsJobsListLoading,
                 jobInfos, setJobInfos,
                 isJobInfoLoading, setIsJobInfoLoading,

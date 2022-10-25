@@ -21,7 +21,7 @@ export default function SelectedJobInfo({selectedJobInfo, refreshJobDetails}) {
             </Grid>
             {isJobInfoLoading
                 ?
-                <LoadingButton loading={true} sx={{width: '100%', height: '100%', scale: '3'}}/>
+                <LoadingButton loading={true} sx={{width: '100%', height: '100%', scale: '3', marginTop: '4rem'}}/>
                 :
                 selectedJobInfo?<JobInfo jobInfo={selectedJobInfo} detailedInfo={true}/>:<></>
             }
