@@ -13,13 +13,24 @@ export default function JobInfosList({listJobs, jobInfos, checkJobStatus}) {
         isJobsListLoading,
     } = useContext(StockImageContext);
 
+    function handlePageInput(e) {
+        let page = parseInt(e.target.value);
+        if(page<0){
+            page=0;
+        }
+        if(!page){
+            page=0;
+        }
+        setJobListPage(page);
+    }
+
     return (
         <Grid container item xs={12}>
             <Grid item xs={9}>
                 <SectionLabel labelText='Jobs list'/>
             </Grid>
             <Grid item xs={2}>
-                <TextField variant="outlined" label="Page" type="number" value={jobListPage} onChange={(e)=>{setJobListPage(e.target.value)}} InputLabelProps={{ shrink: true, }} InputProps={{ inputProps: { min: 0 } }}/>
+                <TextField variant="outlined" label="Page" type="tel" value={jobListPage} onChange={(e)=>{handlePageInput(e)}}/>
             </Grid>
             <Grid item xs={1}>
                 <RefreshButton onRefresh={listJobs}/>
