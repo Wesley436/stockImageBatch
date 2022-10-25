@@ -8,7 +8,7 @@ import { LoadingButton } from '@mui/lab';
 
 export default function SelectedJobInfo({selectedJobInfo, refreshJobDetails}) {
     const {
-        isLoading,
+        isJobInfoLoading,
     } = useContext(StockImageContext);
 
     return (
@@ -19,7 +19,7 @@ export default function SelectedJobInfo({selectedJobInfo, refreshJobDetails}) {
             <Grid item xs={1}>
                 <RefreshButton onRefresh={refreshJobDetails}/>
             </Grid>
-            {isLoading
+            {isJobInfoLoading
                 ?
                 <LoadingButton loading={true} sx={{width: '100%', height: '100%', scale: '3'}}/>
                 :

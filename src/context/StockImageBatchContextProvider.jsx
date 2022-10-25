@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useRef } from 'react';
 import axios from 'axios';
 
 export const StockImageContext = createContext();
@@ -6,9 +6,13 @@ export const StockImageContext = createContext();
 export default function StockImageContextProvider(props) {
     const [token, setToken] = useState([]);
     const [inputFile, setInputFile] = useState();
-    const [isLoading, setIsLoading] = useState(false);
+    const [jobListPage, setJobListPage] = useState(0);
+    const [isJobsListLoading, setIsJobsListLoading] = useState(false);
     const [jobInfos, setJobInfos] = useState([]);
+    const jobInfosRef = useRef(jobInfos);
+    jobInfosRef.current = jobInfos;
 
+    const [isJobInfoLoading, setIsJobInfoLoading] = useState(false);
     const [selectedJobInfo, setSelectedJobInfo] = useState();
 
     const [errorMessage, setErrorMessage] = useState();
@@ -16,14 +20,19 @@ export default function StockImageContextProvider(props) {
     // const batchRequestURL = 'http://localhost:3001';
     const batchRequestURL = 'https://bxrlwa1tjl.execute-api.us-east-1.amazonaws.com';
 
+    function getErrorMessage (action, message){
+        return '<'+new Date().toUTCString()+'> '+action+' failed: '+message
+    }
+
     function checkJobStatus(jobId) {
         let formData = new FormData();
         formData.append('token', token);
         formData.append('job_id', jobId);
 
-        const index = jobInfos.findIndex(jobInfo => jobInfo.jobId === jobId);
+        const index = jobInfosRef.current.findIndex(jobInfo => jobInfo.jobId === jobId);
 
-        setIsLoading(true);
+        setIsJobInfoLoading(true);
+        setErrorMessage('');
         axios({
             method: 'post',
             url: batchRequestURL+'/fetchJob',
@@ -35,8 +44,9 @@ export default function StockImageContextProvider(props) {
         })
         .then(json => {
             let response = json.response;
-            let updatingJobInfo = [...jobInfos][index];
+            let updatingJobInfo = [...jobInfosRef.current][index];
             if (json.success){
+                setErrorMessage('');
                 updatingJobInfo.jobFile = response.job_file;
                 updatingJobInfo.jobStatus = response.job_status;
                 updatingJobInfo.finishedAt = response.finished_at;
@@ -44,24 +54,25 @@ export default function StockImageContextProvider(props) {
                 updatingJobInfo.remarks = response.remarks;
                 updatingJobInfo.jobStatus = response.job_status;
                 updatingJobInfo.startedAt = response.started_at;
+                const updatingJobInfos = jobInfosRef.current.map((jobInfo, i)=>{
+                    if(i === index){
+                        return updatingJobInfo;
+                    }else{
+                        return jobInfo;
+                    }
+                })
+                setJobInfos(updatingJobInfos);
+                setSelectedJobInfo(updatingJobInfo);
             }else {
-                setErrorMessage(response.message);
-                updatingJobInfo.jobStatus = 'error';
+                setErrorMessage(getErrorMessage('Fetch job', response.message));
+                setJobInfos([]);
+                setSelectedJobInfo();
             }
-            const updatingJobInfos = jobInfos.map((jobInfo, i)=>{
-                if(i === index){
-                    return updatingJobInfo;
-                }else{
-                    return jobInfo;
-                }
-            })
-            setSelectedJobInfo(updatingJobInfo);
-            setJobInfos(updatingJobInfos);
-            setIsLoading(false);
+            setIsJobInfoLoading(false);
         })
         .catch(err => {
-            setErrorMessage(err);
-            setIsLoading(false);
+            setErrorMessage(getErrorMessage('Fetch job', err));
+            setIsJobInfoLoading(false);
         })
     }
 
@@ -73,7 +84,8 @@ export default function StockImageContextProvider(props) {
 
         let newJobInfo = {};
         newJobInfo.jobStatus = 'starting';
-        setIsLoading(true);
+        setIsJobsListLoading(true);
+        setErrorMessage('');
         axios({
             method: 'post',
             url: batchRequestURL+'/requestJob',
@@ -87,23 +99,31 @@ export default function StockImageContextProvider(props) {
             let response = json.response;
             if(json.success){
                 newJobInfo.jobId = response.job_id;
+                newJobInfo.requestedAt = response.requested_at;
                 setJobInfos([...jobInfos, newJobInfo])
+                setTimeout(() => {
+                    checkJobStatus(response.job_id);
+                }, 1000);
             }else{
-                setErrorMessage(response.message);
+                setErrorMessage(getErrorMessage('Request job', response.message));
+                setJobInfos([]);
+                setSelectedJobInfo();
             }
-            setIsLoading(false);
+            setIsJobsListLoading(false);
         })
         .catch(err => {
-            setErrorMessage(err);
-            setIsLoading(false);
+            setErrorMessage(getErrorMessage('Request job', err));
+            setIsJobsListLoading(false);
         })
     }
 
     function listJobs (){
         let formData = new FormData();
         formData.append('token', token);
+        formData.append('page', jobListPage);
 
-        setIsLoading(true);
+        setIsJobsListLoading(true);
+        setErrorMessage('');
         axios({
             method: 'post',
             url: batchRequestURL+'/listJobs',
@@ -116,28 +136,26 @@ export default function StockImageContextProvider(props) {
         .then(json => {
             let response = json.response
             if(json.success){
-                let latestJobInfos = [...jobInfos];
+                setErrorMessage('');
+                let latestJobInfos = [];
                 response.job_list.forEach((job) => {
-                    const index = latestJobInfos.findIndex(jobInfo => jobInfo.jobId === job.job_id);
-                    if(index !== -1){
-                        latestJobInfos[index].jobStatus = job.job_status;
-                    }else {
-                        let latestJobInfo = {};
-                        latestJobInfo.jobId = job.job_id;
-                        latestJobInfo.requestedAt = job.requested_at;
-                        latestJobInfo.jobStatus = job.job_status;
-                        latestJobInfos = [...latestJobInfos, latestJobInfo]
-                    }
+                    let latestJobInfo = {};
+                    latestJobInfo.jobId = job.job_id;
+                    latestJobInfo.requestedAt = job.requested_at;
+                    latestJobInfo.jobStatus = job.job_status;
+                    latestJobInfos = [...latestJobInfos, latestJobInfo]
                 })
                 setJobInfos(latestJobInfos);
             }else{
-                setErrorMessage(response.message);
+                setErrorMessage(getErrorMessage('List job', response.message));
+                setJobInfos([]);
+                setSelectedJobInfo();
             }
-            setIsLoading(false);
+            setIsJobsListLoading(false);
         })
         .catch(err => {
-            setErrorMessage(err);
-            setIsLoading(false);
+            setErrorMessage(getErrorMessage('List job', err));
+            setIsJobsListLoading(false);
         })
     }
 
@@ -147,8 +165,10 @@ export default function StockImageContextProvider(props) {
                 token, setToken,
                 inputFile, setInputFile,
                 sendBatchJob,
-                isLoading, setIsLoading,
+                jobListPage, setJobListPage,
+                isJobsListLoading, setIsJobsListLoading,
                 jobInfos, setJobInfos,
+                isJobInfoLoading, setIsJobInfoLoading,
                 selectedJobInfo, setSelectedJobInfo,
                 listJobs,
                 checkJobStatus,
