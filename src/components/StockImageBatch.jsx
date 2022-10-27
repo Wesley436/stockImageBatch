@@ -1,5 +1,3 @@
-import { useContext } from 'react';
-import { StockImageContext } from '../context/StockImageBatchContextProvider';
 import { Grid } from '@mui/material';
 import CardContainer from './CardContainer';
 import TokenField from './TokenField';
@@ -9,36 +7,26 @@ import SelectedJobInfo from './SelectedJobInfo';
 import '../styles/App.css';
 
 export default function StockImageBatch() {
-    const {
-        token, setToken,
-        inputFile, setInputFile,
-        sendBatchJob,
-        checkJobStatus,
-        jobInfos,
-        selectedJobInfo,
-        listJobs,
-    } = useContext(StockImageContext);
-
     return(
         <Grid container>
-            <Grid item xs={12} sx={{padding:'1rem', borderRadius:'50px'}}>
+            <Grid item xs={12} sx={{padding:'1rem'}}>
                 <CardContainer left>
-                    <TokenField token={token} setToken={setToken}/>
+                    <TokenField/>
                 </CardContainer>
             </Grid>
             <Grid container item xs={12} sx={{padding:'1rem'}}>
                 <CardContainer left>
-                    <FileUpload inputFile={inputFile} setInputFile={setInputFile} onSend={sendBatchJob}/>
+                    <FileUpload/>
                 </CardContainer>
             </Grid>
             <Grid container item xs={6} sx={{padding:'1rem'}}>
                 <CardContainer left>
-                    <JobInfosList listJobs={listJobs} jobInfos={jobInfos} checkJobStatus={checkJobStatus}/>
+                    <JobInfosList/>
                 </CardContainer>
             </Grid>
             <Grid container item xs={6} sx={{padding:'1rem'}}>
                 <CardContainer left>
-                    <SelectedJobInfo selectedJobInfo={selectedJobInfo} refreshJobDetails={()=>{if(selectedJobInfo){checkJobStatus(selectedJobInfo.jobId)}}}/>
+                    <SelectedJobInfo/>
                 </CardContainer>
             </Grid>
         </Grid>

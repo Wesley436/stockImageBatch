@@ -29,9 +29,14 @@ export default function JobInfo({jobInfo, detailedInfo, checkJobStatus}) {
                 <JobInfoText hidden={!jobInfo.resultUrl||!detailedInfo} text={'result url: '} href={jobInfo.resultUrl}/>
                 <JobInfoText hidden={!jobInfo.remarks||!detailedInfo} text={'remarks: ' + jobInfo.remarks}/>
             </Grid>
-            <Grid item xs={2} hidden={detailedInfo}>
-                <Button variant='contained' onClick={()=>{checkJobStatus(jobInfo.jobId)}} sx={fetchButtonStyle}>Fetch</Button>
-            </Grid>
+            {!detailedInfo
+                ?
+                <Grid item xs={2}>
+                    <Button variant='contained' onClick={()=>{checkJobStatus(jobInfo.jobId)}} sx={fetchButtonStyle}>Fetch</Button>
+                </Grid>
+                :
+                <></>
+            }
         </Grid>
     )
 }

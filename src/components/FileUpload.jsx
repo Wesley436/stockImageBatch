@@ -20,8 +20,9 @@ const inputFieldProps = {
     },
 }
 
-export default function FileUpload({inputFile, setInputFile, onSend}) {
+export default function FileUpload() {
     const {
+        inputFile, setInputFile, sendBatchJob,
         inputJobName, setInputJobName,
     } = useContext(StockImageContext);
     return (
@@ -37,7 +38,7 @@ export default function FileUpload({inputFile, setInputFile, onSend}) {
                     <Button disabled={!inputFile} variant='contained' sx={buttonStyle} onClick={()=>{setInputFile()}}>
                         Clear file
                     </Button>
-                    <Button disabled={!inputFile} variant='contained' onClick={onSend} sx={buttonStyle}>
+                    <Button disabled={!inputFile} variant='contained' onClick={sendBatchJob} sx={buttonStyle}>
                         Send
                     </Button>
                 </Grid>

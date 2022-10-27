@@ -4,8 +4,9 @@ import { TextField } from '@mui/material';
 import { Typography } from '@material-ui/core';
 import SectionLabel from './SectionLabel';
 
-export default function TokenField({token, setToken}) {
+export default function TokenField() {
     const {
+        token, setToken,
         listJobs,
         errorMessage,
     } = useContext(StockImageContext);

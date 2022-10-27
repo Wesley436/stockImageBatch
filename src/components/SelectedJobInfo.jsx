@@ -6,8 +6,10 @@ import RefreshButton from './RefreshButton';
 import { Grid } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
-export default function SelectedJobInfo({selectedJobInfo, refreshJobDetails}) {
+export default function SelectedJobInfo() {
     const {
+        selectedJobInfo,
+        checkJobStatus,
         isJobInfoLoading,
     } = useContext(StockImageContext);
 
@@ -17,7 +19,7 @@ export default function SelectedJobInfo({selectedJobInfo, refreshJobDetails}) {
                 <SectionLabel labelText='Job details'/>
             </Grid>
             <Grid item xs={2}>
-                <RefreshButton onRefresh={refreshJobDetails}/>
+                <RefreshButton onRefresh={()=>{if(selectedJobInfo){checkJobStatus(selectedJobInfo.jobId)}}}/>
             </Grid>
             {isJobInfoLoading
                 ?
