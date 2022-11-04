@@ -4,6 +4,13 @@ import axios from 'axios';
 export const StockImageContext = createContext();
 
 export default function StockImageContextProvider(props) {
+    const [openAIToken, setOpenAIToken] = useState('');
+    const [inputPrompt, setInputPrompt] = useState('');
+    const [n, setN] = useState(1);
+    const [size, setSize] = useState('512x512');
+    const [generating, setGenerating] = useState(false);
+    const [generatedImageUrls, setGeneratedImageUrls] = useState([]);
+
     const [token, setToken] = useState('');
     const [inputFile, setInputFile] = useState();
     const [inputJobName, setInputJobName] = useState('');
@@ -24,6 +31,29 @@ export default function StockImageContextProvider(props) {
 
     function getErrorMessage (action, message){
         return '<'+new Date().toUTCString()+'> '+action+' failed: '+message
+    }
+
+    function dallERequest (){
+        setGenerating(true);
+        axios({
+            method: 'post',
+            url: 'https://api.openai.com/v1/images/generations',
+            headers: { 'Content-Type': 'application/json', 'Authorization': openAIToken },
+            data: {
+                "prompt": inputPrompt,
+                "n": parseInt(n),
+                "size": size,
+                "response_format": "url"
+            },
+        })
+        .then(response => {
+            setGeneratedImageUrls(response.data.data);
+            setGenerating(false);
+        })
+        .catch(error => {
+            console.log(error.message);
+            setGenerating(false);
+        })
     }
 
     function checkJobStatus(jobId) {
@@ -175,6 +205,13 @@ export default function StockImageContextProvider(props) {
     return (
         <StockImageContext.Provider
             value={{
+                openAIToken, setOpenAIToken,
+                inputPrompt, setInputPrompt,
+                n, setN,
+                size, setSize,
+                dallERequest,
+                generating,
+                generatedImageUrls,
                 token, setToken,
                 inputFile, setInputFile,
                 inputJobName, setInputJobName,

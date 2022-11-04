@@ -1,5 +1,6 @@
 import { Grid } from '@mui/material';
 import CardContainer from './CardContainer';
+import DallE from './DallE';
 import TokenField from './TokenField';
 import FileUpload from './FileUpload';
 import JobInfosList from './JobInfosList';
@@ -9,6 +10,11 @@ import '../styles/App.css';
 export default function StockImageBatch() {
     return(
         <Grid container>
+            <Grid item xs={12} sx={{padding:'1rem'}}>
+                <CardContainer left>
+                    <DallE/>
+                </CardContainer>
+            </Grid>
             <Grid item xs={12} sx={{padding:'1rem'}}>
                 <CardContainer left>
                     <TokenField/>
