@@ -41,7 +41,7 @@ export default function PageSelect({jobListPage, setJobListPage, listJobs}) {
 
     return (
         <>
-            <TextField variant="outlined" label="Page" type="tel" value={jobListPage} onChange={(e)=>{handlePageInput(e.target.value)}} inputProps={pageFieldProps} onBlur={()=>listJobs()} onKeyDown={(e)=>{handleKey(e.key)}} sx={{minWidth:'4rem'}}/>
+            <TextField variant='outlined' label='Page' type='tel' value={jobListPage} onChange={(e)=>{handlePageInput(e.target.value)}} inputProps={pageFieldProps} onBlur={()=>listJobs()} onKeyDown={(e)=>{handleKey(e.key)}} sx={{minWidth:'4rem'}}/>
             <Grid item xs={6}>
                 <ArrowBackIcon sx={arrowStyle} onClick={()=>incrementPage(-1)}/>
             </Grid>

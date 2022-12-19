@@ -4,16 +4,13 @@ import axios from 'axios';
 export const StockImageContext = createContext();
 
 export default function StockImageContextProvider(props) {
-    const [openAIToken, setOpenAIToken] = useState('');
-    const [inputPrompt, setInputPrompt] = useState('');
-    const [n, setN] = useState(1);
-    const [size, setSize] = useState('512x512');
-    const [generating, setGenerating] = useState(false);
-    const [generatedImageUrls, setGeneratedImageUrls] = useState([]);
-
     const [token, setToken] = useState('');
     const [inputFile, setInputFile] = useState();
     const [inputJobName, setInputJobName] = useState('');
+    const [steps, setSteps] = useState(30);
+    const [cfg, setCFG] = useState(7.5);
+    const [hrFix, setHRFix] = useState(false);
+    const [restoreFace, setRestoreFace] = useState(false);
     const [jobListPage, setJobListPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
     const [isJobsListLoading, setIsJobsListLoading] = useState(false);
@@ -26,34 +23,10 @@ export default function StockImageContextProvider(props) {
 
     const [errorMessage, setErrorMessage] = useState();
 
-    // const batchRequestURL = 'http://localhost:3001';
     const batchRequestURL = 'https://bxrlwa1tjl.execute-api.us-east-1.amazonaws.com';
 
     function getErrorMessage (action, message){
         return '<'+new Date().toUTCString()+'> '+action+' failed: '+message
-    }
-
-    function dallERequest (){
-        setGenerating(true);
-        axios({
-            method: 'post',
-            url: 'https://api.openai.com/v1/images/generations',
-            headers: { 'Content-Type': 'application/json', 'Authorization': openAIToken },
-            data: {
-                "prompt": inputPrompt,
-                "n": parseInt(n),
-                "size": size,
-                "response_format": "url"
-            },
-        })
-        .then(response => {
-            setGeneratedImageUrls(response.data.data);
-            setGenerating(false);
-        })
-        .catch(error => {
-            console.log(error.message);
-            setGenerating(false);
-        })
     }
 
     function checkJobStatus(jobId) {
@@ -113,11 +86,19 @@ export default function StockImageContextProvider(props) {
         let formData = new FormData();
         formData.append('token', token);
         formData.append('job_file', inputFile);
+        formData.append('hrfix', hrFix);
+        formData.append('rface', restoreFace);
 
         let newJobInfo = {};
         if (inputJobName){
             newJobInfo.jobName = inputJobName;
             formData.append('job_name', inputJobName);
+        }
+        if (cfg){
+            formData.append('cfg', cfg);
+        }
+        if (steps){
+            formData.append('steps', steps);
         }
         setInputJobName('');
         setInputFile();
@@ -205,16 +186,14 @@ export default function StockImageContextProvider(props) {
     return (
         <StockImageContext.Provider
             value={{
-                openAIToken, setOpenAIToken,
-                inputPrompt, setInputPrompt,
-                n, setN,
-                size, setSize,
-                dallERequest,
-                generating,
-                generatedImageUrls,
                 token, setToken,
                 inputFile, setInputFile,
                 inputJobName, setInputJobName,
+                steps, setSteps,
+                cfg, setCFG,
+                hrFix, setHRFix,
+                restoreFace, setRestoreFace,
+
                 sendBatchJob,
                 jobListPage, setJobListPage,
                 searchQuery, setSearchQuery,
